@@ -31,7 +31,15 @@ func (puc *PersonUpdateController) UpdatePerson(c *gin.Context) {
 
 	collection := puc.client.Database("crud_1_go_lang").Collection("pessoas")
 	filter := bson.M{"_id": id}
-	update := bson.M{"$set": updatedPerson}
+
+	update := bson.M{
+		"$set": bson.M{
+			"nome":     updatedPerson.Nome,
+			"endereco": updatedPerson.Endereco,
+			// Inclua outros campos conforme necessário
+		},
+	}
+
 	_, err := collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -39,7 +47,7 @@ func (puc *PersonUpdateController) UpdatePerson(c *gin.Context) {
 	}
 
 	responseDTO := dto.PersonResponseDTO{
-		ID:   updatedPerson.ID,
+		ID:   id,
 		Nome: updatedPerson.Nome,
 	}
 

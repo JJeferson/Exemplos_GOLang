@@ -8,6 +8,7 @@ import (
 	"rest_api_crud_pessoas_melhorado/models"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -26,6 +27,8 @@ func (pcc *PersonCreateController) CreatePerson(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	newPerson.ID = primitive.NewObjectID().Hex() // Gerar o ID manualmente
 
 	collection := pcc.client.Database("crud_1_go_lang").Collection("pessoas")
 	_, err := collection.InsertOne(context.Background(), newPerson)
